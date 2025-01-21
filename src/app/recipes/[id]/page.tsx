@@ -7,6 +7,22 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+// ISR
+export const revalidate = 60;
+
+export const dynamicParams = true;
+
+// SSG
+export async function generateStaticParams() {
+  const res = await fetch("https://dummyjson.com/recipes");
+  const { recipes }: {recipes: Recipe[]} = await res.json();
+
+  // Only genrating 
+  return recipes.slice(0, 5).map((recipe: Recipe) => ({
+    id: String(recipe.id),
+  }))
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // read route params
   const id = (await params).id;
